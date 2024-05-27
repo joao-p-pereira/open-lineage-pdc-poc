@@ -31,11 +31,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.15.3</version>
-    </dependency>
-    <dependency>
       <groupId>io.openlineage</groupId>
       <artifactId>openlineage-java</artifactId>
       <version>1.14.0</version>
@@ -44,6 +39,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
       <version>${pdi.version}</version>
+      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -55,33 +51,13 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${pdi.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-vfs2</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>${commons-lang.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.36</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- test dependencies -->
@@ -123,18 +99,6 @@
       <version>${dependency.org.powermock.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- neccessary -->
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-      <dependency>
-          <groupId>net.snowflake</groupId>
-          <artifactId>snowflake-jdbc</artifactId>
-          <version>3.14.1</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
   <build>
     <resources>

@@ -23,8 +23,12 @@
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/lib</outputDirectory>
-      <scope>runtime</scope>
-      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <scope>compile</scope>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <excludes>
+        <exclude>org.pentaho.di.plugins:open-lineage-core</exclude>
+        <exclude>org.slf4j:slf4j-api</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>
