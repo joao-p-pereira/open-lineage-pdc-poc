@@ -1,5 +1,8 @@
 package org.pentaho.di.trans;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.pentaho.di.trans.OpenLineageConfigNames.KETTLE_OPEN_LINEAGE_ACTIVE;
 import static org.pentaho.di.trans.OpenLineageConfigNames.KETTLE_OPEN_LINEAGE_DESTINATION_URL;
 import static org.pentaho.di.trans.OpenLineageConfigNames.KETTLE_OPEN_LINEAGE_MODE;
@@ -11,7 +14,7 @@ public class OpenLineageConfig {
 
   //Default values
   private Boolean openLineageActive = false;
-  private String openLineageMode = "Console";
+  private List<OpenLineageSenderMode> openLineageMode = new ArrayList<>(List.of( OpenLineageSenderMode.CONSOLE));
   private String openLineageDestinationURL = "";
 
   private static OpenLineageConfig instance;
@@ -25,8 +28,21 @@ public class OpenLineageConfig {
 
   OpenLineageConfig() {
     openLineageActive = Boolean.getBoolean( KETTLE_OPEN_LINEAGE_ACTIVE.getConfigPropName() );
-    openLineageMode = System.getProperty( KETTLE_OPEN_LINEAGE_MODE.getConfigPropName(), openLineageMode );
+    openLineageMode = getLineageModes();
     openLineageDestinationURL = System.getProperty( KETTLE_OPEN_LINEAGE_DESTINATION_URL.getConfigPropName(), openLineageDestinationURL );
+  }
+
+  private static List<OpenLineageSenderMode> getLineageModes() {
+    List<OpenLineageSenderMode> result = new ArrayList<>();
+    String config = System.getProperty( KETTLE_OPEN_LINEAGE_MODE.getConfigPropName() );
+    String [] splitted = config.split( ";" );
+    for (String mode : splitted) {
+      result.add( OpenLineageSenderMode.valueOf( mode.toUpperCase() ) );
+    }
+    if (result.isEmpty()) {
+      result.add( OpenLineageSenderMode.CONSOLE );
+    }
+    return result;
   }
 
 
@@ -34,7 +50,7 @@ public class OpenLineageConfig {
     return openLineageActive;
   }
 
-  public String getOpenLineageMode() {
+  public List<OpenLineageSenderMode> getOpenLineageModes() {
     return openLineageMode;
   }
 

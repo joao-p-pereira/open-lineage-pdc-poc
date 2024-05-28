@@ -12,7 +12,7 @@ public enum OpenLineageConfigNames {
 
   /**
    * Sets the way open lineage will be displayed/pushed.
-   * Currently supported HTTP, Console.
+   * Currently supported HTTP, Console, Spoon_log
    */
   KETTLE_OPEN_LINEAGE_MODE("KETTLE_OPEN_LINEAGE_MODE"),
 
