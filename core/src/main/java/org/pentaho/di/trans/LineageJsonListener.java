@@ -29,11 +29,9 @@ import org.pentaho.di.core.extension.ExtensionPoint;
 import org.pentaho.di.core.extension.ExtensionPointInterface;
 import org.pentaho.di.core.logging.LogChannel;
 import org.pentaho.di.core.logging.LogChannelInterface;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -42,64 +40,58 @@ import java.util.UUID;
 @ExtensionPoint(
   description = "Open lineage Plugin",
   extensionPointId = "TransformationStartThreads",
-  id = "transOpenLineage" )
-public class LineageJsonGenerator implements TransListener, ExtensionPointInterface {
-  LogChannelInterface log = new LogChannel( "Open Lineage Plugin" );
+  id = "OpenLineageListner" )
+public class LineageJsonListener implements TransListener, ExtensionPointInterface {
+  //TODO when the plugin exists in the main branch change this from pdi-openlineage-plugin-ee to main
+  protected static final String PRODUCER_URL =
+    "https://github.com/pentaho/pdi-plugins-ee/tree/pdi-openlineage-plugin-ee/pdi-openlineage-plugin";
+  LogChannelInterface log;
 
-  public LineageJsonGenerator() {
+  public LineageJsonListener() {
     super();
   }
 
   @Override
   public void transStarted( Trans trans ) throws KettleException {
-    log.logDetailed("Calling transStarted for OpenLineage plugin");
-    var config = OpenLineageConfig.getInstance();
-    var openLineageSender = new OpenLineageSender(config);
+    log = new LogChannel( trans.getName() );
+    log.logDetailed( "Calling transStarted for OpenLineage plugin" );
 
-
-
-
-    URI producer = URI.create( "Produced_by_wookies_team" );
-    OpenLineage ol = new OpenLineage( producer );
-
-    ZonedDateTime now = ZonedDateTime.now( ZoneOffset.UTC );
-    UUID runId = UUID.randomUUID();
-
-    OpenLineage.RunFacets runFacets =
-      ol.newRunFacetsBuilder().nominalTime( ol.newNominalTimeRunFacet( now, now ) ).build();
-    var run = ol.newRun( runId, runFacets );
-
-
-    String name = "jobName";
-    String namespace = "jobNamespace";
-    OpenLineage.JobFacets jobFacets = ol.newJobFacetsBuilder().build();
-    OpenLineage.Job job = ol.newJob( namespace, name, jobFacets );
-
-
-    var runEvent = ol.newRunEvent( now, OpenLineage.RunEvent.EventType.START, run, job, new ArrayList<>(), new ArrayList<>() );
+    OpenLineageConfig config = OpenLineageConfig.getInstance();
+    OpenLineageSender openLineageSender = new OpenLineageSender( config, log );
+    OpenLineage.RunEvent runEvent = createStartRunEvent( trans );
 
     openLineageSender.emit( runEvent );
-    // Create the configuration here, maybe from properties
-    // Create a component responsible for sending open lineage information based on a conf passed
-    // Possible create have two Options: HTTP and Console (HttpTransport,ConsoleTransport)
-    // Send Start event
-    LogChannelInterface log = new LogChannel( "APP_NAME" );
-    log.logBasic( "basic logging" );
+  }
 
+  private static OpenLineage.RunEvent createStartRunEvent( Trans trans ) {
+    URI producer = URI.create( PRODUCER_URL );
+    OpenLineage ol = new OpenLineage( producer );
+    ZonedDateTime startTime = trans.getCurrentDate().toInstant().atZone( ZoneId.systemDefault() );
+    ZonedDateTime endTime = trans.getCurrentDate().toInstant().atZone( ZoneId.systemDefault() );
 
+    //TODO verify this, for some reason log channel id is used as transformation runID
+    //https://github.com/pentaho/pentaho-kettle/blob/a07f8f272a7819cd1bdb4bcb4e6fde4602a84829/engine/src/main/java/org/pentaho/di/trans/Trans.java#L812
+    UUID runId = UUID.fromString( trans.getLogChannelId() ); //5d89cf0e-b312-4f6c-96c9-37d6915c9e4c
+
+    OpenLineage.RunFacets runFacets =
+      ol.newRunFacetsBuilder().nominalTime( ol.newNominalTimeRunFacet( startTime, endTime ) ).build();
+    var run = ol.newRun( runId, runFacets );
+
+    OpenLineage.JobFacets jobFacets = ol.newJobFacetsBuilder().build();
+    OpenLineage.Job job = ol.newJob( trans.getExecutingServer(), trans.getTransMeta().getFilename(), jobFacets );
+
+    return ol.newRunEvent( startTime, OpenLineage.RunEvent.EventType.START, run, job, new ArrayList<>(),
+      new ArrayList<>() );
   }
 
   @Override
   public void transActive( Trans trans ) {
-    // Do nothing... or send running event?
-    log.logBasic( "Entered active" );
-
   }
 
   @Override
   public void transFinished( Trans trans ) throws KettleException {
     // Create the open lineage complete/fail/abort event in here
-    log.logBasic( "Entered Finished" );
+    log.logDetailed( "Calling transFinished for OpenLineage plugin" );
     createLineageJson( trans );
     //Send Lineage using the component created in transStarted
     //SendLineage(var lineage);
@@ -108,7 +100,6 @@ public class LineageJsonGenerator implements TransListener, ExtensionPointInterf
   private void createLineageJson( Trans trans ) {
 
   }
-
 
 
   @Override

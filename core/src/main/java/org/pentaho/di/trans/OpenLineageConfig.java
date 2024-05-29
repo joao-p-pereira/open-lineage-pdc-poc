@@ -34,7 +34,7 @@ public class OpenLineageConfig {
 
   private static List<OpenLineageSenderMode> getLineageModes() {
     List<OpenLineageSenderMode> result = new ArrayList<>();
-    String config = System.getProperty( KETTLE_OPEN_LINEAGE_MODE.getConfigPropName() );
+    String config = System.getProperty( KETTLE_OPEN_LINEAGE_MODE.getConfigPropName(), "console" );
     String [] splitted = config.split( ";" );
     for (String mode : splitted) {
       result.add( OpenLineageSenderMode.valueOf( mode.toUpperCase() ) );

@@ -1,29 +1,32 @@
 package org.pentaho.di.trans;
 
 import io.openlineage.client.OpenLineage;
-import io.openlineage.client.OpenLineageClient;
-import io.openlineage.client.transports.ConsoleConfig;
-import io.openlineage.client.transports.ConsoleTransport;
-
-import java.net.URI;
+import io.openlineage.client.OpenLineageClientUtils;
+import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.logging.LogChannelInterface;
 
 public class OpenLineageConsoleWriter implements IOpenLineageWriter {
 
-  OpenLineageClient client;
+  LogChannelInterface log;
 
-  OpenLineageConsoleWriter() {
-    OpenLineageClient client = new OpenLineageClient( new ConsoleTransport() );
+  OpenLineageConsoleWriter( LogChannelInterface log ) {
+    this.log = log;
   }
 
   @Override public void emit( OpenLineage.RunEvent event ) {
-    client.emit( event );
+    logEvent( OpenLineageClientUtils.toJson( event ) );
   }
 
   @Override public void emit( OpenLineage.JobEvent event ) {
-    client.emit( event );
+    logEvent( OpenLineageClientUtils.toJson( event ) );
   }
 
   @Override public void emit( OpenLineage.DatasetEvent event ) {
-    client.emit( event );
+    logEvent( OpenLineageClientUtils.toJson( event ) );
+  }
+
+  private void logEvent( String event ) {
+    //TODO Maybe pretty print
+    log.logBasic( event );
   }
 }
