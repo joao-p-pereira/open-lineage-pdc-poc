@@ -1,4 +1,4 @@
-package org.pentaho.di.trans;
+package com.pentaho.di.trans.producer;
 
 public enum OpenLineageSenderMode {
 

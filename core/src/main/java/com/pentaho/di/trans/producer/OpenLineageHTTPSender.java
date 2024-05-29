@@ -1,18 +1,17 @@
-package org.pentaho.di.trans;
+package com.pentaho.di.trans.producer;
 
 import io.openlineage.client.OpenLineage;
 import io.openlineage.client.OpenLineageClient;
-import io.openlineage.client.transports.ConsoleTransport;
 import io.openlineage.client.transports.HttpConfig;
 import io.openlineage.client.transports.HttpTransport;
 
 import java.net.URI;
 
-public class OpenLineageHTTPWriter implements IOpenLineageWriter {
+public class OpenLineageHTTPSender implements IOpenLineageSender {
 
   OpenLineageClient client;
 
-  OpenLineageHTTPWriter() {
+  OpenLineageHTTPSender() {
     HttpConfig config = new HttpConfig();
     config.setUrl( URI.create( "http://localhost:5000" ) );
     client = new OpenLineageClient( new HttpTransport( config ) );

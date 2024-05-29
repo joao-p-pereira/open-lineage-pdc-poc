@@ -1,8 +1,8 @@
-package org.pentaho.di.trans;
+package com.pentaho.di.trans.producer;
 
 import io.openlineage.client.OpenLineage;
 
-public interface IOpenLineageSender  {
+public interface IOpenLineageProducer {
   void emit( OpenLineage.RunEvent event );
 
   void emit( OpenLineage.JobEvent event );

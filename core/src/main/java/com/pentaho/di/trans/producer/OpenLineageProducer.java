@@ -1,24 +1,25 @@
-package org.pentaho.di.trans;
+package com.pentaho.di.trans.producer;
 
+import com.pentaho.di.trans.config.OpenLineageConfig;
 import io.openlineage.client.OpenLineage;
 import org.pentaho.di.core.logging.LogChannelInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenLineageSender implements IOpenLineageSender {
+public class OpenLineageProducer implements IOpenLineageProducer {
 
-  List<IOpenLineageWriter> senders;
+  List<IOpenLineageSender> senders;
 
-  OpenLineageSender( OpenLineageConfig olConfig, LogChannelInterface log ) {
+  public OpenLineageProducer( OpenLineageConfig olConfig, LogChannelInterface log ) {
     senders = new ArrayList<>();
     for ( OpenLineageSenderMode mode : olConfig.getOpenLineageModes() ) {
       switch ( mode ) {
         case CONSOLE:
-          senders.add( new OpenLineageConsoleWriter( log ) );
+          senders.add( new OpenLineageConsoleSender( log ) );
           break;
         case HTTP:
-          senders.add( new OpenLineageHTTPWriter() );
+          senders.add( new OpenLineageHTTPSender() );
           break;
         // Add more cases as needed
         default:

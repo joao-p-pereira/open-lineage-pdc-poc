@@ -1,28 +1,27 @@
-package org.pentaho.di.trans;
+package com.pentaho.di.trans.producer;
 
 import io.openlineage.client.OpenLineage;
 import io.openlineage.client.OpenLineageClientUtils;
-import org.pentaho.di.core.logging.LogChannel;
 import org.pentaho.di.core.logging.LogChannelInterface;
 
-public class OpenLineageConsoleWriter implements IOpenLineageWriter {
+public class OpenLineageConsoleSender implements IOpenLineageSender {
 
   LogChannelInterface log;
 
-  OpenLineageConsoleWriter( LogChannelInterface log ) {
+  OpenLineageConsoleSender( LogChannelInterface log ) {
     this.log = log;
   }
 
   @Override public void emit( OpenLineage.RunEvent event ) {
-    logEvent( OpenLineageClientUtils.toJson( event ) );
+    logEvent( "Open Lineage Run event: ".concat( OpenLineageClientUtils.toJson( event ) ) );
   }
 
   @Override public void emit( OpenLineage.JobEvent event ) {
-    logEvent( OpenLineageClientUtils.toJson( event ) );
+    logEvent( "Open Lineage Job event: ".concat( OpenLineageClientUtils.toJson( event ) ) );
   }
 
   @Override public void emit( OpenLineage.DatasetEvent event ) {
-    logEvent( OpenLineageClientUtils.toJson( event ) );
+    logEvent( "Open Lineage Dataset event: ".concat( OpenLineageClientUtils.toJson( event ) ) );
   }
 
   private void logEvent( String event ) {
